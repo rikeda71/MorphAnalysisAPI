@@ -21,7 +21,7 @@ We can try following 3 japanese morphlogical analysis using this API.
 
 ```shell
 docker build . -t morph-analysis-api # wait a minute
-docker run -t --rm -d -p 5000:5000 morph-analysis-api:latest
+docker run -it --rm -d -p 5000:5000 -v $PWD/:/app morph-analysis-api:latest python app.py
 ```
 
 ### Down Docker Container

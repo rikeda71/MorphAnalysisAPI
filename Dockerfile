@@ -1,7 +1,7 @@
 FROM python:3.7
 
 
-RUN apt update && apt install -y \
+RUN apt update && apt install -q -y \
     curl \
     make \
     gcc build-essential \
@@ -12,8 +12,8 @@ RUN apt update && apt install -y \
     xz-utils \
     file \
     && locale-gen ja_JP.UTF-8 \
-    && pip3 install -U pip \
-    && pip3 install six mecab-python3 flask python-dotenv\
+    && pip3 install -q -U pip \
+    && pip3 install -q six mecab-python3 flask python-dotenv\
     && git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git \
     && mkdir -p `mecab-config --dicdir` \
     && ./mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y \
@@ -22,13 +22,10 @@ RUN apt update && apt install -y \
     && tar xJvf jumanpp-1.02.tar.xz \
     && cd jumanpp-1.02\
     && ./configure && make && make install \
-    && curl -L -o pyknp-0.3.tar.gz 'http://nlp.ist.i.kyoto-u.ac.jp/nl-resource/knp/pyknp-0.3.tar.gz' \
-    && tar xvf pyknp-0.3.tar.gz \
-    && cd pyknp-0.3 \
-    && python3 setup.py install \
-    && cd ../../ \
+    && cd ../ \
     && rm -rf jumanpp-1.02* \
-    && pip3 install -e git+git://github.com/WorksApplications/SudachiPy@develop#egg=SudachiPy \
+    && pip3 install -q pyknp \
+    && pip3 install -q -e git+git://github.com/WorksApplications/SudachiPy@develop#egg=SudachiPy \
     && wget -q https://object-storage.tyo2.conoha.io/v1/nc_2520839e1f9641b08211a5c85243124a/sudachi/sudachi-dictionary-20190531-full.zip \
     && unzip sudachi-dictionary-20190531-full.zip \
     && mv sudachi-dictionary-20190531/system_full.dic /src/sudachipy/resources/system.dic \
@@ -38,8 +35,6 @@ RUN apt update && apt install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /home
 ENV LANG=ja_JP.UTF-8
 EXPOSE 5000
-COPY app.py /home/
-CMD ["python", "app.py"]
+WORKDIR /app

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import MeCab
 import sudachipy
 from sudachipy import dictionary, tokenizer
-from pyknp import Jumanpp
+from pyknp import Juman
 
 
 app = Flask(__name__)
@@ -28,8 +28,8 @@ def mecab():
         m = MeCab.Tagger('')
         parsed = m.parse(sentence).split('\n')[:-2]
         words = [morph.split('\t')[0] for morph in parsed]
-        pos = [morph.split('\t')[1].replace(',', '\t') for morph in parsed]
-        response = {'words': words, 'pos': pos}
+        info = [morph.split('\t')[1].replace(',', '\t') for morph in parsed]
+        response = {'words': words, 'info': info}
         return jsonify(response)
     return jsonify({})
 
@@ -53,7 +53,7 @@ def jumanpp():
     if request.method in ['POST'] and \
             request.headers['Content-Type'] == 'application/json':
         sentence = request.get_json()['sentence']
-        juman = Jumanpp()
+        juman = Juman(jumanpp=True)
         result = juman.analysis(sentence)
         words = []
         info = []
